@@ -59,5 +59,52 @@ function createCheckDigit(membershipId) {
     membershipId = checkDigit.toString();
   }
   return checkDigit;
-  
+}
+
+/*
+** 4.
+** Write a function that converts user entered date 
+** formatted as M/D/YYYY to a format required by an API (YYYYMMDD). 
+** The parameter "userDate" and the return value are strings.
+*/
+function formatDate(userDate) {
+  var tempDate = new Date(userDate);
+  var finalDate = tempDate.getFullYear().toString();
+  var monthDigit = tempDate.getMonth() + 1;
+  var dateDigit = tempDate.getDate();
+  function formatWithZero(digit) {
+    digit > 9 ? digit = digit.toString() : digit = "0" + digit.toString();
+    return digit;
+  }
+  finalDate += formatWithZero(monthDigit);
+  finalDate += formatWithZero(dateDigit);
+  return finalDate; 
+}
+
+/*
+** 5.
+** An image gallery is a set of images with corresponding remove buttons. This is the HTML code for a gallery with two images:
+**
+<div class="image">
+  <img src="https://goo.gl/kjzfbE" alt="First">
+  <button class="remove">X</button>
+</div>
+<div class="image">
+  <img src="https://goo.gl/d2JncW" alt="Second">
+  <button class="remove">X</button>
+</div>
+** Implement the setup function that registers a click event handler 
+** and implements the following logic: 
+** When the button of class remove is clicked, its parent <div> element should be removed from the gallery.
+*/
+function setup() {
+    var buttons = document.querySelectorAll(".remove");
+    if(buttons.length !== 0) {
+      for(var i = 0; i < buttons.length; i++) {
+        buttons[i].addEventListener("click", function(){
+          this.parentNode.remove();
+          buttons = document.querySelectorAll(".remove");
+        });
+      }
+    }
 }
