@@ -108,3 +108,60 @@ function setup() {
       }
     }
 }
+
+/*
+** 6.
+** Fix the bugs in the registerHandlers function. 
+** An alert should display anchor's zero-based index within a document 
+** instead of following the link.
+**
+function registerHandlers() {
+  var as = document.getElementsByTagName('a');
+  for (var i = 0; i < as.length; i++) {
+    as[i].onclick = function() {
+      alert(i);
+      return false;
+    }
+  }
+}
+**
+*/
+function registerHandlers() {
+  var as = document.getElementsByTagName('a');
+  for (let i = 0; i < as.length; i++) {
+    as[i].onclick = function() {
+      alert(i);
+      return false;
+    }
+  }
+}
+
+
+/*
+** 7.
+** Function appendChildren should add a new child div to each existing div. 
+** New divs should be decorated by calling decorateDiv.
+** The code below should do the job, but for some reason it goes into an infinite loop. 
+** Fix the bugs.
+** 
+function appendChildren(decorateDivFunction) {
+  var allDivs = document.getElementsByTagName("div");
+
+  for (var i = 0; i < allDivs.length; i++) {
+    var newDiv = document.createElement("div");
+    decorateDivFunction(newDiv);
+    allDivs[i].appendChild(newDiv);
+  }
+}
+**
+*/
+function appendChildren(decorateDivFunction) {
+  var allDivs = document.getElementsByTagName("div");
+  var originalLength = allDivs.length;
+
+  for (var i = 0; i < originalLength; i++) {
+    var newDiv = document.createElement("div");
+    decorateDivFunction(newDiv);
+    allDivs[i].appendChild(newDiv);
+  }
+}
