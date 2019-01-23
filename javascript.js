@@ -165,3 +165,205 @@ function appendChildren(decorateDivFunction) {
     allDivs[i].appendChild(newDiv);
   }
 }
+
+
+/* FROM FREECODECAMP */
+
+/*
+** Palindrome Checker
+** Return true if the given string is a palindrome. Otherwise, return false.
+** You'll need to remove all non-alphanumeric characters (punctuation, spaces and symbols) 
+** and turn everything into the same case (lower or upper case) in order to check for palindromes.
+*/
+function palindrome(str) {
+  let isPalindrom = true;
+
+  let arr = str.toLowerCase().match(/[a-z0-9]/g);
+  let end = arr.length-1;
+  let start = 0;
+  while(end > start) {
+    if(arr[end] !== arr[start]) { return false; }
+    end--;
+    start++;
+  }
+
+  return isPalindrom;
+}
+
+/*
+** Roman Numeral Converter
+** Convert the given number into a roman numeral.
+** All roman numerals answers should be provided in upper-case.
+*/
+function convertToRoman(num) {
+  let thousands = parseInt(num/1000, 10);
+  let hundreds = parseInt(num/100%10, 10);
+  let tens = parseInt(num/10%10, 10);
+  let ones = num%10;
+  let result = "";
+  let romanNumerals = {
+    "thousands" : "M",
+    "500": "D",
+    "hundreds": "C",
+    "50": "L",
+    "tens": "X",
+    "5": "V",
+    "ones": "I"
+  };
+
+  function convert(amount, numeral) {
+    let str = "";
+    while(amount !== 0) {
+      str += numeral;
+      amount--;
+    }
+    return str;
+  }
+
+  function convertComplex(num, numeral, fives) {
+    let allNumerals = Object.values(romanNumerals);
+    let previousNumeral = allNumerals[allNumerals.indexOf(numeral)-1];
+    if(Math.round(5/num) > 1) {
+      return convert(num, numeral);
+    } 
+    if(5%num === 1) {
+      return numeral + fives;
+    }
+    if(num === 5) {
+      return fives;
+    }
+    if(num%5 < 4) {
+      return fives + convert(num%5, numeral);
+    }
+    if(num === 9) {
+      return numeral + previousNumeral;
+    }
+  }
+
+  if(thousands >= 1) {
+    result += convert(thousands, romanNumerals["thousands"]);
+  }
+  if(hundreds >= 1) {
+    result += convertComplex(hundreds, romanNumerals["hundreds"], romanNumerals["500"]);
+  }
+  if(tens >= 1) {
+    result += convertComplex(tens, romanNumerals["tens"], romanNumerals["50"]);
+  }
+  if(ones >= 1) {
+    result += convertComplex(ones, romanNumerals["ones"], romanNumerals["5"]);
+  }
+
+
+
+ return result;
+}
+
+
+/*
+** Caesars Cipher
+** Write a function which takes a ROT13 encoded string as input and returns a decoded string.
+** All letters will be uppercase. Do not transform any non-alphabetic character (i.e. spaces, punctuation), 
+** but do pass them on.
+*/
+function rot13(str) { // LBH QVQ VG!
+  let arr = str.split("")
+                .map(x => x.charCodeAt(0))
+                .map(x => x >= 65 && x <= 90 ? 
+                                                x < 65+13 ? x + 13 : x - 13 
+                                                                                : x);
+
+  return String.fromCharCode(...arr);
+}
+
+/*
+** Telephone Number Validator
+** Return true if the passed string looks like a valid US phone number.
+*/
+function telephoneCheck(str) {
+  let regExp = /^1?\s*((\(\d{3}\))|(\d{3}))[\s|-]*(\d[\s-]*){7}$/g;
+  console.log(str.match(regExp));
+
+
+  return regExp.test(str);
+}
+
+/*
+** Cash Register
+** Design a cash register drawer function checkCashRegister() that accepts purchase price as the first argument (price), 
+** payment as the second argument (cash), and cash-in-drawer (cid) as the third argument.
+** cid is a 2D array listing available currency.
+** The checkCashRegister() function should always return an object with a status key and a change key.
+** Return {status: "INSUFFICIENT_FUNDS", change: []} 
+** if cash-in-drawer is less than the change due, or if you cannot return the exact change.
+** Return {status: "CLOSED", change: [...]} with cash-in-drawer as the value for the key change 
+** if it is equal to the change due.
+** Otherwise, return {status: "OPEN", change: [...]}, 
+** with the change due in coins and bills, sorted in highest to lowest order, as the value of the change key.
+*/
+function checkCashRegister(price, cash, cid) {
+  var change = {};
+  let values = [["PENNY", 0.01],
+ ["NICKEL", 0.05],
+ ["DIME", 0.1],
+ ["QUARTER", 0.25],
+ ["ONE", 1],
+ ["FIVE", 5],
+ ["TEN", 10],
+ ["TWENTY", 20],
+ ["ONE HUNDRED", 100]];
+  let changeAvailable = false;
+ let changeAmount = cash-price;
+  let possibleChoices = [];
+
+for(let i of values) {
+  if(changeAmount-i[1] >= 0) {
+    changeAvailable = true;
+    possibleChoices.push(i[0]);
+  } else { break; }
+}
+
+change.status = "OPEN";
+change.change = [];
+for(let i = possibleChoices.length-1; i >= 0; i--) {
+  if(cid[i][1]-changeAmount > 0) {
+    if(changeAmount%values[i][1] !== 0) {
+      let temp = parseInt(changeAmount/values[i][1], 10)*values[i][1];
+      cid[i][1] -= temp;
+      changeAmount -= temp;
+      changeAmount = changeAmount.toFixed(2);
+      if(temp !== 0) {change.change.push([cid[i][0], +temp]);}
+    } else { 
+      cid[i][1] -= changeAmount; 
+      change.change.push([cid[i][0], +changeAmount]);
+      break;
+    }    
+    
+  } else {
+    if(i === 0 && cid[i][1]-changeAmount < 0) {
+      change.status = "INSUFFICIENT_FUNDS";
+      change.change = [];
+      break;
+    } else {
+    changeAmount -= cid[i][1];
+    changeAmount = changeAmount.toFixed(2);
+    if(cid[i][1] !== 0) { change.change.push([cid[i][0], +cid[i][1]]); }
+    cid[i][1] = 0;
+    }
+    
+  }
+  if(cid.every(x => x[1] === 0)) { change.status = "CLOSED"; }
+
+}
+
+if(change.status === "CLOSED") {
+  for(let i in values) {
+    if(!change.change[i]) {
+      change.change.push([values[i][0], 0]);
+    }
+  }
+}
+
+
+console.log(change.change);
+  return change;
+}
